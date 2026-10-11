@@ -64,26 +64,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onSelectTab(item.id);
                   onCloseMobile();
                 }}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-primary-accent text-white shadow-sm'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-slate-100'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/80 hover:shadow-2xs'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600'}`} />
                   <span>{item.label}</span>
                 </div>
                 {item.badge ? (
                   <span
                     className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                      isActive ? 'bg-indigo-700/60 text-white' : 'bg-slate-200/70 text-slate-700'
+                      isActive ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
                     }`}
                   >
                     {item.badge}
                   </span>
                 ) : (
-                  <ChevronRight className={`w-3.5 h-3.5 opacity-60 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <ChevronRight className={`w-3.5 h-3.5 opacity-60 ${isActive ? 'text-white' : 'text-slate-300'}`} />
                 )}
               </button>
             );
@@ -92,13 +92,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Safety & Compliance Badge */}
-      <div className="mt-8 pt-6 border-t border-border-color px-2">
-        <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3.5">
-          <div className="flex items-center gap-2 mb-1.5 text-xs font-semibold text-slate-800">
-            <ShieldCheck className="w-4 h-4 text-primary-accent" />
+      <div className="mt-8 pt-6 border-t border-slate-200/60 px-2">
+        <div className="rounded-2xl bg-white/70 backdrop-blur-md border border-slate-200/80 p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-slate-900">
+            <ShieldCheck className="w-4 h-4 text-indigo-600" />
             <span>Responsible AI Guard</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-text-secondary">
+          <p className="text-[11px] leading-relaxed text-slate-500">
             Keys remain on server. Python code is rendered safely for review and never executed automatically.
           </p>
         </div>
@@ -109,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-64 bg-white border-r border-border-color min-h-[calc(100vh-4rem)] flex-shrink-0">
+      <aside className="hidden md:block w-64 glass-panel border-r border-slate-200/80 min-h-[calc(100vh-4rem)] flex-shrink-0">
         {content}
       </aside>
 
@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={onCloseMobile}
           />
-          <div className="fixed inset-y-0 left-0 w-72 bg-white shadow-xl z-50">
+          <div className="fixed inset-y-0 left-0 w-72 glass-panel shadow-2xl z-50">
             {content}
           </div>
         </div>
