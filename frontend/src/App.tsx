@@ -8,12 +8,15 @@ import { DataAnalysisPage } from './features/data-analysis/DataAnalysisPage';
 import { ResumeGeneratorPage } from './features/resume/ResumeGeneratorPage';
 import { InterviewGeneratorPage } from './features/interview/InterviewGeneratorPage';
 import { MeetingSummarizerPage } from './features/meeting/MeetingSummarizerPage';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [healthError, setHealthError] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useKeyboardShortcuts({ onSelectTab: setActiveTab });
 
   useEffect(() => {
     let isMounted = true;
@@ -73,6 +76,9 @@ export const App: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
+            <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+              <kbd className="font-mono text-[10px]">Alt+1..5</kbd> Switch tabs
+            </span>
             <span>Powered by OpenAI &amp; FastAPI</span>
             <span className="text-slate-300">&bull;</span>
             <span className="text-slate-500">
