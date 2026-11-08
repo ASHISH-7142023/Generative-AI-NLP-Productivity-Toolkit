@@ -48,5 +48,7 @@ Document any team members volunteering help or resources (e.g. **Walker**: Avail
 List any confirmed decisions, or state if none were recorded.
 
 ## 6. Action Items & Next Steps
-List concrete follow-up items with explicitly assigned owners, or indicate recommended next steps based on blockers.
+List concrete follow-up items with priority and owner tags where identifiable:
+Format: `- [PRIORITY: HIGH/MEDIUM/LOW] [Owner: Name or Unassigned] Action description`
+(e.g., `- [HIGH] [Owner: Kyle & Walker] Pair on software fix to unblock release`).
 """
