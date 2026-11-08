@@ -1,5 +1,6 @@
-"""OpenAI Service isolating all external LLM SDK calls, error handling, and timeout enforcement."""
+"""OpenAI Service isolating all external LLM SDK calls, error handling, retries, and timeout enforcement."""
 
+import asyncio
 from typing import Optional
 import openai
 from openai import AsyncOpenAI
@@ -38,7 +39,7 @@ class TimeoutError(OpenAIServiceException):
 
 
 class OpenAIService:
-    """Manages OpenAI client and completions."""
+    """Manages OpenAI client, exponential retries, and completions."""
 
     def __init__(self, client: Optional[AsyncOpenAI] = None):
         self._client = client
@@ -55,8 +56,43 @@ class OpenAIService:
         self._client = AsyncOpenAI(
             api_key=api_key.strip(),
             timeout=settings.REQUEST_TIMEOUT_SECONDS,
+            max_retries=settings.OPENAI_MAX_RETRIES,
         )
         return self._client
+
+    async def _execute_completion(
+        self,
+        client: AsyncOpenAI,
+        model_name: str,
+        messages: list,
+        temperature: float,
+        max_tokens: int,
+    ) -> str:
+        """Internal helper to request completion with backoff retry."""
+        attempts = 0
+        max_attempts = max(1, settings.OPENAI_MAX_RETRIES + 1)
+
+        while attempts < max_attempts:
+            attempts += 1
+            try:
+                response = await client.chat.completions.create(
+                    model=model_name,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                )
+                if not response.choices or not response.choices[0].message.content:
+                    raise OpenAIServiceException("Received an empty response from OpenAI.", code="EMPTY_RESPONSE", status_code=502)
+                return response.choices[0].message.content.strip()
+            except (openai.RateLimitError, openai.APITimeoutError) as transient_err:
+                if attempts >= max_attempts:
+                    raise
+                backoff_delay = 1.5 ** attempts
+                logger.warning(
+                    "Transient OpenAI error on attempt %d/%d (%s). Retrying in %.2fs...",
+                    attempts, max_attempts, type(transient_err).__name__, backoff_delay
+                )
+                await asyncio.sleep(backoff_delay)
 
     async def generate_text(
         self,
@@ -65,27 +101,19 @@ class OpenAIService:
         temperature: float = 0.2,
         max_tokens: int = 3000,
     ) -> str:
-        """Call the configured OpenAI model and return the generated text response."""
+        """Call the configured OpenAI model with fallback and return the generated text response."""
         client = self.get_client()
-        model_name = settings.OPENAI_MODEL
+        primary_model = settings.OPENAI_MODEL
+        fallback_model = settings.OPENAI_FALLBACK_MODEL
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ]
 
         try:
-            logger.info("Dispatching completion request to OpenAI model '%s'", model_name)
-            response = await client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens,
-            )
-
-            if not response.choices or not response.choices[0].message.content:
-                raise OpenAIServiceException("Received an empty response from OpenAI.", code="EMPTY_RESPONSE", status_code=502)
-
-            content = response.choices[0].message.content.strip()
-            return content
+            logger.info("Dispatching completion request to OpenAI model '%s'", primary_model)
+            return await self._execute_completion(client, primary_model, messages, temperature, max_tokens)
 
         except MissingAPIKeyError:
             raise
@@ -98,16 +126,29 @@ class OpenAIService:
         except openai.APITimeoutError as e:
             logger.error("OpenAI timeout: %s", str(e))
             raise TimeoutError() from e
-        except openai.APIConnectionError as e:
-            logger.error("OpenAI connection failed: %s", str(e))
-            raise OpenAIServiceException("Could not connect to the OpenAI API.", code="CONNECTION_ERROR", status_code=503) from e
         except openai.APIError as e:
+            # If primary model fails and fallback model is configured, try fallback model
+            if fallback_model and fallback_model != primary_model and hasattr(e, "status_code") and e.status_code in (404, 500, 502, 503):
+                logger.warning("Primary model '%s' failed (%s). Attempting fallback model '%s'", primary_model, str(e), fallback_model)
+                try:
+                    return await self._execute_completion(client, fallback_model, messages, temperature, max_tokens)
+                except Exception as fallback_err:
+                    logger.error("Fallback model also failed: %s", str(fallback_err))
             logger.error("OpenAI API error: %s", str(e))
-            raise OpenAIServiceException(f"OpenAI service error: {e.message or str(e)}", code="OPENAI_API_ERROR", status_code=502) from e
+            raise OpenAIServiceException(
+                f"OpenAI service reported an error: {str(e)}",
+                code="OPENAI_API_ERROR",
+                status_code=502,
+            ) from e
         except Exception as e:
-            logger.error("Unexpected error during OpenAI generation: %s", str(e))
-            raise OpenAIServiceException(f"Unexpected generation error: {str(e)}", code="INTERNAL_GENERATION_ERROR", status_code=500) from e
+            if isinstance(e, OpenAIServiceException):
+                raise
+            logger.exception("Unexpected error calling OpenAI service: %s", str(e))
+            raise OpenAIServiceException(
+                "An unexpected error occurred while communicating with the AI service.",
+                code="SERVICE_UNAVAILABLE",
+                status_code=503,
+            ) from e
 
 
-# Global service instance
 openai_service = OpenAIService()

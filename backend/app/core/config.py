@@ -23,6 +23,14 @@ class Settings(BaseSettings):
         default="gpt-4o-mini",
         description="OpenAI model identifier (e.g. gpt-4o-mini, gpt-3.5-turbo, or custom model)",
     )
+    OPENAI_FALLBACK_MODEL: Optional[str] = Field(
+        default="gpt-3.5-turbo",
+        description="Fallback model if the primary model fails or is unavailable",
+    )
+    OPENAI_MAX_RETRIES: int = Field(
+        default=2,
+        description="Maximum retry attempts for transient OpenAI API errors",
+    )
 
     FRONTEND_ORIGIN: str = Field(
         default="http://localhost:5173",
