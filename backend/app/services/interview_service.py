@@ -27,7 +27,7 @@ class InterviewService:
         return await self.llm_service.generate_text(
             prompt=prompt,
             system_prompt=system_msg,
-            temperature=0.4,
+            temperature=request.temperature if request.temperature is not None else 0.4,
         )
 
 

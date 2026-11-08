@@ -13,7 +13,12 @@ def build_interview_prompt(
     """Build a prompt instructing the model to generate tailored programming interview questions."""
     topic_clause = f"\nFocus Topic: {topic}" if topic else ""
     answer_clause = (
-        "For each question, provide a concise explanation, sample code snippet or hint, and what the interviewer is evaluating. Clearly demarcate each question and its answer/hint."
+        "For each question, provide:\n"
+        "   - **Evaluation Rubric:** Core concepts being tested and what signals a strong vs weak candidate.\n"
+        "   - **Suggested Solution:** Clear explanation with runnable code example in " + language + ".\n"
+        "   - **Complexity Analysis:** Expected Big-O time and space complexity.\n"
+        "   - **Hint Ladder:** A 2-tier hint ladder (Gentle nudge -> Structural approach) for interviewers to offer struggling candidates.\n"
+        "Clearly demarcate each question and its rubric/solution."
         if include_answers
         else "Provide only the questions without answers."
     )
