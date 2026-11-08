@@ -12,6 +12,7 @@ from app.api.schemas import ErrorDetail, ErrorResponse
 from app.core.config import settings
 from app.core.logging_config import logger, setup_logging
 from app.core.middleware import RequestIDMiddleware
+from app.core.security import SecurityHeadersMiddleware
 from app.services.openai_service import OpenAIServiceException
 
 
@@ -35,6 +36,9 @@ app = FastAPI(
     docs_url="/docs" if settings.APP_ENV == "development" else None,
     redoc_url="/redoc" if settings.APP_ENV == "development" else None,
 )
+
+# Security Headers Middleware
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Request Correlation & Timing Middleware
 app.add_middleware(RequestIDMiddleware)
