@@ -17,6 +17,14 @@ export default {
         success: '#15803D',
         warning: '#B45309',
         danger: '#B91C1C',
+        // Dark Mode & High-Contrast Tokens
+        'dark-bg': '#0B0F19',
+        'dark-surface': '#111827',
+        'dark-panel': '#1F2937',
+        'dark-border': '#374151',
+        'dark-muted': '#9CA3AF',
+        'accent-cyan': '#06B6D4',
+        'accent-violet': '#8B5CF6',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
