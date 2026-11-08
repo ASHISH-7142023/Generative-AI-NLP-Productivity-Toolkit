@@ -42,6 +42,12 @@ class EDARequest(BaseModel):
         max_length=2000,
         description="Optional specific goals such as missing value checks, distributions, or outliers",
     )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override between 0.0 and 1.0",
+    )
 
     @field_validator("dataset_description")
     @classmethod
@@ -73,6 +79,12 @@ class VisualizationRequest(BaseModel):
         max_length=1000,
         description="Optional comma-separated list of column names",
     )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override between 0.0 and 1.0",
+    )
 
     @field_validator("dataset_description")
     @classmethod
@@ -97,6 +109,12 @@ class ResumeRequest(BaseModel):
     style: Optional[ResumeStyle] = Field(
         default=ResumeStyle.STANDARD,
         description="Resume formatting style: concise, standard, or detailed",
+    )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override between 0.0 and 1.0",
     )
 
     @field_validator("experience")
@@ -133,6 +151,12 @@ class InterviewQuestionRequest(BaseModel):
         default=True,
         description="Whether to include suggested answers, hints, or solution outlines",
     )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override between 0.0 and 1.0",
+    )
 
     @field_validator("language")
     @classmethod
@@ -152,6 +176,12 @@ class MeetingSummaryRequest(BaseModel):
     style: Optional[MeetingSummaryStyle] = Field(
         default=MeetingSummaryStyle.STANDARD,
         description="Summary depth: concise, standard, or action-focused",
+    )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override between 0.0 and 1.0",
     )
 
     @field_validator("notes")
@@ -181,10 +211,16 @@ class SystemMetricsResponse(BaseModel):
     active_endpoints: int
 
 
+class UsageMetadata(BaseModel):
+    estimated_tokens: Optional[int] = None
+    character_count: int = 0
+
+
 class FeatureResponse(BaseModel):
     success: bool = True
     feature: str
     result: str
+    usage: Optional[UsageMetadata] = None
 
 
 class ErrorDetail(BaseModel):

@@ -9,6 +9,7 @@ from app.api.schemas import (
     HealthResponse,
     SystemMetricsResponse,
     FeatureResponse,
+    UsageMetadata,
     EDARequest,
     VisualizationRequest,
     ResumeRequest,
@@ -17,6 +18,16 @@ from app.api.schemas import (
 )
 
 _server_start_time = time.time()
+
+
+def _make_feature_response(feature: str, result: str) -> FeatureResponse:
+    tokens = max(1, len(result) // 4)
+    return FeatureResponse(
+        success=True,
+        feature=feature,
+        result=result,
+        usage=UsageMetadata(estimated_tokens=tokens, character_count=len(result)),
+    )
 from app.services.data_analysis_service import data_analysis_service
 from app.services.resume_service import resume_service
 from app.services.interview_service import interview_service
@@ -70,11 +81,7 @@ async def system_metrics() -> SystemMetricsResponse:
 async def generate_eda(request: EDARequest) -> FeatureResponse:
     """Generate commented Python code for exploratory data analysis using Pandas."""
     result = await data_analysis_service.generate_eda_code(request)
-    return FeatureResponse(
-        success=True,
-        feature="eda",
-        result=result,
-    )
+    return _make_feature_response("eda", result)
 
 
 @router.post(
@@ -86,11 +93,7 @@ async def generate_eda(request: EDARequest) -> FeatureResponse:
 async def generate_visualization(request: VisualizationRequest) -> FeatureResponse:
     """Generate commented Python code for plotting with Matplotlib and Seaborn."""
     result = await data_analysis_service.generate_visualization_code(request)
-    return FeatureResponse(
-        success=True,
-        feature="visualization",
-        result=result,
-    )
+    return _make_feature_response("visualization", result)
 
 
 @router.post(
@@ -102,11 +105,7 @@ async def generate_visualization(request: VisualizationRequest) -> FeatureRespon
 async def generate_resume(request: ResumeRequest) -> FeatureResponse:
     """Transform experience paragraph into a professional structured resume."""
     result = await resume_service.generate_resume(request)
-    return FeatureResponse(
-        success=True,
-        feature="resume",
-        result=result,
-    )
+    return _make_feature_response("resume", result)
 
 
 @router.post(
@@ -118,11 +117,7 @@ async def generate_resume(request: ResumeRequest) -> FeatureResponse:
 async def generate_interview_questions(request: InterviewQuestionRequest) -> FeatureResponse:
     """Generate programming interview questions for specified language and difficulty."""
     result = await interview_service.generate_interview_questions(request)
-    return FeatureResponse(
-        success=True,
-        feature="interview",
-        result=result,
-    )
+    return _make_feature_response("interview", result)
 
 
 @router.post(
@@ -134,8 +129,4 @@ async def generate_interview_questions(request: InterviewQuestionRequest) -> Fea
 async def summarize_meeting(request: MeetingSummaryRequest) -> FeatureResponse:
     """Summarize meeting notes into overview, speaker updates, blockers, and action items."""
     result = await meeting_service.summarize_meeting(request)
-    return FeatureResponse(
-        success=True,
-        feature="meeting",
-        result=result,
-    )
+    return _make_feature_response("meeting", result)
