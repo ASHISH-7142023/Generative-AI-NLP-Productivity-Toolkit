@@ -1,0 +1,11 @@
+transaction_id,date,region,customer_segment,product_category,units_sold,unit_price,revenue,discount_percent
+TXN-1001,2024-01-05,North America,Enterprise,Cloud Services,12,250.00,3000.00,0.05
+TXN-1002,2024-01-08,Europe,Mid-Market,Hardware,4,450.00,1800.00,0.00
+TXN-1003,2024-01-12,Asia Pacific,SMB,Software License,25,80.00,2000.00,0.10
+TXN-1004,2024-01-15,North America,Enterprise,Consulting,40,150.00,6000.00,0.00
+TXN-1005,2024-01-18,Latin America,SMB,Cloud Services,8,250.00,2000.00,0.15
+TXN-1006,2024-01-22,Europe,Enterprise,Software License,50,75.00,3750.00,0.08
+TXN-1007,2024-01-25,North America,Mid-Market,Hardware,6,450.00,2700.00,0.02
+TXN-1008,2024-01-28,Asia Pacific,Enterprise,Cloud Services,30,220.00,6600.00,0.12
+TXN-1009,2024-02-02,North America,SMB,Software License,15,85.00,1275.00,0.00
+TXN-1010,2024-02-05,Europe,Mid-Market,Consulting,20,160.00,3200.00,0.05

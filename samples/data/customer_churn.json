@@ -1,0 +1,38 @@
+[
+  {
+    "customer_id": "CUST-001",
+    "tenure_months": 24,
+    "monthly_charges": 65.5,
+    "total_charges": 1572.0,
+    "contract_type": "One-Year",
+    "payment_method": "Credit Card",
+    "churn": 0
+  },
+  {
+    "customer_id": "CUST-002",
+    "tenure_months": 3,
+    "monthly_charges": 89.2,
+    "total_charges": 267.6,
+    "contract_type": "Month-to-Month",
+    "payment_method": "Electronic Check",
+    "churn": 1
+  },
+  {
+    "customer_id": "CUST-003",
+    "tenure_months": 48,
+    "monthly_charges": 105.0,
+    "total_charges": 5040.0,
+    "contract_type": "Two-Year",
+    "payment_method": "Bank Transfer",
+    "churn": 0
+  },
+  {
+    "customer_id": "CUST-004",
+    "tenure_months": 7,
+    "monthly_charges": 74.0,
+    "total_charges": 518.0,
+    "contract_type": "Month-to-Month",
+    "payment_method": "Electronic Check",
+    "churn": 1
+  }
+]
