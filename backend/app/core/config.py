@@ -39,6 +39,11 @@ class Settings(BaseSettings):
         description="Timeout in seconds for external OpenAI API calls",
     )
 
+    LOG_FORMAT: str = Field(
+        default="text",
+        description="Log output format: 'text' for human readability or 'json' for structured log aggregation",
+    )
+
     @property
     def cors_origins(self) -> List[str]:
         """Parse comma-separated origins or return single origin, plus local defaults."""

@@ -19,7 +19,7 @@ from app.services.openai_service import OpenAIServiceException
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan context for startup and shutdown diagnostics."""
-    setup_logging()
+    setup_logging(log_format=settings.LOG_FORMAT)
     logger.info("Starting %s v%s in %s mode", settings.APP_NAME, settings.APP_VERSION, settings.APP_ENV)
     logger.info("Configured OpenAI model: %s", settings.OPENAI_MODEL)
     if not settings.OPENAI_API_KEY:
