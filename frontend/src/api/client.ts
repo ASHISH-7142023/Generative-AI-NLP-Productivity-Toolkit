@@ -6,6 +6,7 @@ import {
   MeetingPayload,
   FeatureResponse,
   HealthResponse,
+  SystemMetricsResponse,
   ErrorResponse,
 } from '../types/api';
 
@@ -63,6 +64,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const apiClient = {
   async getHealth(): Promise<HealthResponse> {
     return request<HealthResponse>('/api/health', { method: 'GET' });
+  },
+
+  async getSystemMetrics(): Promise<SystemMetricsResponse> {
+    return request<SystemMetricsResponse>('/api/system/metrics', { method: 'GET' });
   },
 
   async generateEDA(payload: EDAPayload): Promise<FeatureResponse> {
