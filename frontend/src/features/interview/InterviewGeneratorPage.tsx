@@ -6,6 +6,7 @@ import { ResultPanel } from '../../components/ResultPanel';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { InterviewDifficulty } from '../../types/api';
+import { useToast } from '../../context/ToastContext';
 
 const POPULAR_LANGUAGES = [
   'Python',
@@ -20,6 +21,7 @@ const POPULAR_LANGUAGES = [
 ];
 
 export const InterviewGeneratorPage: React.FC = () => {
+  const toast = useToast();
   const [language, setLanguage] = useState('Java');
   const [difficulty, setDifficulty] = useState<InterviewDifficulty>('Intermediate');
   const [count, setCount] = useState<number>(5);
@@ -37,6 +39,7 @@ export const InterviewGeneratorPage: React.FC = () => {
     setTopic('Object-Oriented Programming and JVM Concurrency');
     setIncludeAnswers(true);
     setError(null);
+    toast.info('Loaded Java OOP preset');
   };
 
   const handleGenerate = async (e?: React.FormEvent) => {
@@ -64,6 +67,7 @@ export const InterviewGeneratorPage: React.FC = () => {
         include_answers: includeAnswers,
       });
       setResult(res.result);
+      toast.success(`Generated ${count} ${language} interview questions`);
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         setError({ message: err.message, code: err.code });

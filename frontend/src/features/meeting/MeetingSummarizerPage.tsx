@@ -6,6 +6,7 @@ import { ResultPanel } from '../../components/ResultPanel';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { MeetingStyle } from '../../types/api';
+import { useToast } from '../../context/ToastContext';
 
 const EXAMPLE_CAPSTONE_NOTES = `Max: Profits up 50%
 Ruby: New servers are online
@@ -14,6 +15,7 @@ Walker: Happy to help
 Parkman: Beta testing almost done`;
 
 export const MeetingSummarizerPage: React.FC = () => {
+  const toast = useToast();
   const [notes, setNotes] = useState('');
   const [style, setStyle] = useState<MeetingStyle>('standard');
 
@@ -25,6 +27,7 @@ export const MeetingSummarizerPage: React.FC = () => {
     setNotes(EXAMPLE_CAPSTONE_NOTES);
     setStyle('standard');
     setError(null);
+    toast.info('Loaded Capstone meeting transcript (Max, Ruby, Kyle, Walker, Parkman)');
   };
 
   const handleSummarize = async (e?: React.FormEvent) => {
@@ -44,6 +47,7 @@ export const MeetingSummarizerPage: React.FC = () => {
         style,
       });
       setSummaryResult(res.result);
+      toast.success('Meeting summary synthesized successfully');
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         setError({ message: err.message, code: err.code });

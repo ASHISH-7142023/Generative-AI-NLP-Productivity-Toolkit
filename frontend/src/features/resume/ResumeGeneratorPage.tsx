@@ -6,8 +6,10 @@ import { ResultPanel } from '../../components/ResultPanel';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { ResumeStyle } from '../../types/api';
+import { useToast } from '../../context/ToastContext';
 
 export const ResumeGeneratorPage: React.FC = () => {
+  const toast = useToast();
   const [experience, setExperience] = useState('');
   const [targetRole, setTargetRole] = useState('Senior Python Developer');
   const [style, setStyle] = useState<ResumeStyle>('standard');
@@ -23,6 +25,7 @@ export const ResumeGeneratorPage: React.FC = () => {
     setTargetRole('Lead Backend Engineer');
     setStyle('standard');
     setError(null);
+    toast.info('Sample profile loaded');
   };
 
   const handleGenerate = async (e?: React.FormEvent) => {
@@ -43,6 +46,7 @@ export const ResumeGeneratorPage: React.FC = () => {
         style,
       });
       setResumeResult(res.result);
+      toast.success('Executive resume generated successfully');
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         setError({ message: err.message, code: err.code });

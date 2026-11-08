@@ -5,8 +5,10 @@ import { InputField } from '../../components/InputField';
 import { CodeResult } from '../../components/CodeResult';
 import { LoadingState } from '../../components/LoadingState';
 import { ErrorMessage } from '../../components/ErrorMessage';
+import { useToast } from '../../context/ToastContext';
 
 export const DataAnalysisPage: React.FC = () => {
+  const toast = useToast();
   const [subTab, setSubTab] = useState<'eda' | 'viz'>('eda');
 
   // EDA Form state
@@ -39,6 +41,7 @@ export const DataAnalysisPage: React.FC = () => {
       setVizGoal('Correlation heatmap between numeric metrics, distribution plots of exam scores, and count plot by gender.');
     }
     setError(null);
+    toast.info('Loaded student performance dataset preset');
   };
 
   const handleGenerateEDA = async (e?: React.FormEvent) => {
@@ -57,6 +60,7 @@ export const DataAnalysisPage: React.FC = () => {
         analysis_goals: edaGoals.trim() || undefined,
       });
       setGeneratedCode(res.result);
+      toast.success('Pandas EDA code generated successfully');
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         setError({ message: err.message, code: err.code });
@@ -85,6 +89,7 @@ export const DataAnalysisPage: React.FC = () => {
         columns: vizColumns.trim() || undefined,
       });
       setGeneratedCode(res.result);
+      toast.success('Pandas EDA code generated successfully');
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         setError({ message: err.message, code: err.code });
