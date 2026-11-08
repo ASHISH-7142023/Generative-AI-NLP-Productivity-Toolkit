@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Copy, Check, Download, Printer, Trash2 } from 'lucide-react';
+import { ExportDropdown } from './ExportDropdown';
 
 interface ResultPanelProps {
   title: string;
@@ -96,14 +97,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
             )}
           </button>
 
-          <button
-            onClick={handleDownload}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-primary-accent hover:bg-indigo-100 transition-colors border border-indigo-100"
-            title={`Download ${downloadFilename}`}
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download</span>
-          </button>
+          <ExportDropdown content={content} baseFilename={downloadFilename} />
 
           {onClear && (
             <button
