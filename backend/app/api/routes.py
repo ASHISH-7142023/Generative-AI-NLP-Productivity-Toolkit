@@ -1,9 +1,13 @@
 """FastAPI router defining all endpoints for the productivity toolkit."""
 
+import platform
+import sys
+import time
 from fastapi import APIRouter, status
 from app.core.config import settings
 from app.api.schemas import (
     HealthResponse,
+    SystemMetricsResponse,
     FeatureResponse,
     EDARequest,
     VisualizationRequest,
@@ -11,6 +15,8 @@ from app.api.schemas import (
     InterviewQuestionRequest,
     MeetingSummaryRequest,
 )
+
+_server_start_time = time.time()
 from app.services.data_analysis_service import data_analysis_service
 from app.services.resume_service import resume_service
 from app.services.interview_service import interview_service
@@ -32,6 +38,26 @@ async def health_check() -> HealthResponse:
         service="nlp-productivity-toolkit",
         version=settings.APP_VERSION,
         model_configured=settings.OPENAI_MODEL,
+    )
+
+
+@router.get(
+    "/system/metrics",
+    response_model=SystemMetricsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="System metrics and runtime diagnostics",
+)
+async def system_metrics() -> SystemMetricsResponse:
+    """Returns application uptime, Python version, and active route count."""
+    uptime = time.time() - _server_start_time
+    return SystemMetricsResponse(
+        status="ok",
+        service="nlp-productivity-toolkit",
+        version=settings.APP_VERSION,
+        uptime_seconds=round(uptime, 2),
+        python_version=platform.python_version(),
+        configured_model=settings.OPENAI_MODEL,
+        active_endpoints=len(router.routes),
     )
 
 

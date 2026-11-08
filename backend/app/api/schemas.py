@@ -171,6 +171,16 @@ class HealthResponse(BaseModel):
     model_configured: str
 
 
+class SystemMetricsResponse(BaseModel):
+    status: str = "ok"
+    service: str = "nlp-productivity-toolkit"
+    version: str = "1.0.0"
+    uptime_seconds: float
+    python_version: str
+    configured_model: str
+    active_endpoints: int
+
+
 class FeatureResponse(BaseModel):
     success: bool = True
     feature: str
