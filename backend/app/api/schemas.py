@@ -42,6 +42,11 @@ class EDARequest(BaseModel):
         max_length=2000,
         description="Optional specific goals such as missing value checks, distributions, or outliers",
     )
+    eda_mode: Optional[str] = Field(
+        default="comprehensive",
+        max_length=64,
+        description="Statistical profiling preset: comprehensive, outlier_analysis, correlation_profiling, or missing_value_audit",
+    )
     temperature: Optional[float] = Field(
         default=None,
         ge=0.0,

@@ -29,6 +29,7 @@ class DataAnalysisService:
             dataset_description=request.dataset_description,
             filename=request.filename,
             analysis_goals=request.analysis_goals,
+            eda_mode=request.eda_mode,
         )
         system_msg = (
             "You are an expert Python data analyst. Return runnable, safe, and clean "
@@ -37,7 +38,7 @@ class DataAnalysisService:
         raw_result = await self.llm_service.generate_text(
             prompt=prompt,
             system_prompt=system_msg,
-            temperature=0.2,
+            temperature=request.temperature if request.temperature is not None else 0.2,
         )
         return clean_code_output(raw_result)
 
@@ -56,7 +57,7 @@ class DataAnalysisService:
         raw_result = await self.llm_service.generate_text(
             prompt=prompt,
             system_prompt=system_msg,
-            temperature=0.2,
+            temperature=request.temperature if request.temperature is not None else 0.2,
         )
         return clean_code_output(raw_result)
 

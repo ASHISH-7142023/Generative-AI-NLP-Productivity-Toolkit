@@ -7,10 +7,12 @@ def build_eda_prompt(
     dataset_description: str,
     filename: Optional[str] = "dataset.csv",
     analysis_goals: Optional[str] = None,
+    eda_mode: Optional[str] = "comprehensive",
 ) -> str:
     """Build a prompt instructing the model to generate Pandas EDA code."""
     file_spec = f"'{filename}'" if filename else "'dataset.csv'"
     goals_clause = f"\nSpecific Analysis Goals:\n{analysis_goals}" if analysis_goals else ""
+    mode_clause = f"\nAnalysis Profiling Mode: {eda_mode.upper()}" if eda_mode else ""
 
     return f"""You are an expert Python Data Analyst.
 Your task is to write clean, runnable, commented Python code for Exploratory Data Analysis (EDA) using the pandas library based on the user's dataset description.
@@ -20,6 +22,7 @@ Dataset Description:
 
 Target File Name:
 {file_spec}
+{mode_clause}
 {goals_clause}
 
 Strict Instructions:
