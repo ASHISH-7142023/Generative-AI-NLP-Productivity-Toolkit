@@ -11,6 +11,7 @@ from app.api.routes import router
 from app.api.schemas import ErrorDetail, ErrorResponse
 from app.core.config import settings
 from app.core.logging_config import logger, setup_logging
+from app.core.middleware import RequestIDMiddleware
 from app.services.openai_service import OpenAIServiceException
 
 
@@ -34,6 +35,9 @@ app = FastAPI(
     docs_url="/docs" if settings.APP_ENV == "development" else None,
     redoc_url="/redoc" if settings.APP_ENV == "development" else None,
 )
+
+# Request Correlation & Timing Middleware
+app.add_middleware(RequestIDMiddleware)
 
 # CORS Middleware
 app.add_middleware(
