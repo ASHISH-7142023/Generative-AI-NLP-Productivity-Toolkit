@@ -1,17 +1,21 @@
 import React from 'react';
-import { Sparkles, Server, AlertCircle, Menu } from 'lucide-react';
+import { Sparkles, Server, AlertCircle, Menu, History, Search } from 'lucide-react';
 import { HealthResponse } from '../types/api';
 
 interface AppHeaderProps {
   health: HealthResponse | null;
   healthError: boolean;
   onToggleMobileMenu: () => void;
+  onOpenHistory?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
   health,
   healthError,
   onToggleMobileMenu,
+  onOpenHistory,
+  onOpenCommandPalette,
 }) => {
   return (
     <header className="glass-panel sticky top-0 z-40 border-b border-slate-200/80 transition-all">
@@ -49,7 +53,32 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         </div>
 
         {/* Server & Model Status */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {onOpenCommandPalette && (
+            <button
+              onClick={onOpenCommandPalette}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 transition-colors"
+              title="Open Command Palette (Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Search</span>
+              <kbd className="hidden sm:inline font-mono text-[10px] bg-white dark:bg-slate-900 px-1 py-0.5 rounded border border-slate-300 dark:border-slate-700 text-slate-400">
+                ⌘K
+              </kbd>
+            </button>
+          )}
+
+          {onOpenHistory && (
+            <button
+              onClick={onOpenHistory}
+              className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 transition-colors flex items-center gap-1"
+              title="View Generation History"
+            >
+              <History className="w-3.5 h-3.5 text-indigo-500" />
+              <span className="hidden sm:inline">History</span>
+            </button>
+          )}
+
           {healthError ? (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-2xs">
               <AlertCircle className="w-3.5 h-3.5 text-red-500" />

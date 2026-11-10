@@ -9,14 +9,33 @@ import { ResumeGeneratorPage } from './features/resume/ResumeGeneratorPage';
 import { InterviewGeneratorPage } from './features/interview/InterviewGeneratorPage';
 import { MeetingSummarizerPage } from './features/meeting/MeetingSummarizerPage';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { HistoryDrawer } from './components/HistoryDrawer';
+import { CommandPalette } from './components/CommandPalette';
+import { useSystemTheme } from './hooks/useSystemTheme';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [healthError, setHealthError] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+
+  const { toggleTheme } = useSystemTheme();
 
   useKeyboardShortcuts({ onSelectTab: setActiveTab });
+
+  // Listen for Ctrl+K / Cmd+K to open Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,6 +67,21 @@ export const App: React.FC = () => {
         health={health}
         healthError={healthError}
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onOpenHistory={() => setHistoryOpen(true)}
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+      />
+
+      <HistoryDrawer
+        isOpen={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+      />
+
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
+        onToggleDarkMode={toggleTheme}
+        onOpenHistory={() => setHistoryOpen(true)}
       />
 
       <div className="flex-1 flex flex-col md:flex-row">
