@@ -53,13 +53,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </p>
         </div>
 
-        <nav className="space-y-1.5" aria-label="Main Navigation">
+        <nav className="space-y-1.5" aria-label="Main Navigation" role="navigation">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
+                role="link"
+                aria-current={isActive ? 'page' : undefined}
                 onClick={() => {
                   onSelectTab(item.id);
                   onCloseMobile();
@@ -115,10 +117,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Mobile Drawer */}
       {isOpenMobile && (
-        <div className="fixed inset-0 z-40 md:hidden">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation drawer"
+          className="fixed inset-0 z-40 md:hidden"
+        >
           <div
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={onCloseMobile}
+            aria-hidden="true"
           />
           <div className="fixed inset-y-0 left-0 w-72 glass-panel shadow-2xl z-50">
             {content}
