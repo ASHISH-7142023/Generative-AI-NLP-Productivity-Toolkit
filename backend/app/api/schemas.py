@@ -218,7 +218,49 @@ class SystemMetricsResponse(BaseModel):
 
 class UsageMetadata(BaseModel):
     estimated_tokens: Optional[int] = None
+    prompt_tokens: Optional[int] = None
+    completion_tokens: Optional[int] = None
+    estimated_cost_usd: Optional[float] = None
     character_count: int = 0
+    cached: bool = False
+
+
+class CoverLetterRequest(BaseModel):
+    experience_text: str = Field(
+        ...,
+        min_length=10,
+        max_length=10000,
+        description="Candidate background, key accomplishments, and skill narrative",
+    )
+    job_description: str = Field(
+        ...,
+        min_length=10,
+        max_length=10000,
+        description="Target job description and requirements to tailor for",
+    )
+    company_name: Optional[str] = Field(
+        default="Hiring Team",
+        max_length=120,
+        description="Target company or employer name",
+    )
+    tone: Optional[str] = Field(
+        default="professional",
+        max_length=50,
+        description="Tone: professional, enthusiastic, executive, or technical",
+    )
+    temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Optional sampling temperature override",
+    )
+
+    @field_validator("experience_text", "job_description")
+    @classmethod
+    def validate_non_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Field cannot be empty or whitespace only.")
+        return v.strip()
 
 
 class FeatureResponse(BaseModel):
