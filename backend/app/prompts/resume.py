@@ -43,3 +43,45 @@ Structure the Resume using clear Markdown headings:
 
 Return the formatted resume directly in clean Markdown format.
 """
+
+
+def build_cover_letter_prompt(
+    experience: str,
+    job_description: str,
+    company_name: Optional[str] = "Hiring Team",
+    tone: Optional[str] = "professional",
+) -> str:
+    """Build a prompt instructing the model to generate a targeted, ATS-aligned cover letter."""
+    tone_guidelines = {
+        "professional": "Polished, formal, and courteous tone suitable for corporate environments.",
+        "enthusiastic": "Dynamic, forward-looking, and passionate tone showcasing strong company alignment.",
+        "executive": "Strategic, outcome-driven tone emphasizing leadership, scale, and organizational impact.",
+        "technical": "Precise, engineering-focused tone emphasizing architectures, tooling, and concrete problem-solving.",
+    }.get(tone or "professional", "Professional and engaging tone.")
+
+    return f"""You are an executive career strategist and talent acquisition expert.
+Your task is to write a compelling, tailored cover letter aligning the candidate's actual experience with the target job requirements.
+
+Target Company / Employer:
+{company_name or 'Hiring Team'}
+
+Target Job Description & Requirements:
+{job_description}
+
+Candidate's Actual Experience & Accomplishments:
+{experience}
+
+Tone Specification ({tone}):
+{tone_guidelines}
+
+STRICT FACTUAL INTEGRITY & ATS RULES:
+1. Ground every claim strictly in the candidate's supplied accomplishments. NEVER fabricate experiences, technologies, or outcomes.
+2. Naturally incorporate relevant keywords and qualification phrases from the job description that truthfully match the candidate's background.
+3. Structure the cover letter into 4 impactful sections:
+   - Strong Opening: Hook expressing enthusiasm for the specific role at {company_name or 'the company'}.
+   - Core Value Alignment: 2-3 focused paragraphs demonstrating how candidate's stated achievements solve key challenges in the job description.
+   - Culture & Impact: Why this position aligns with the candidate's trajectory.
+   - Confident Call to Action: Courteous closing requesting an interview conversation.
+4. Output the complete letter in clean Markdown format with date and placeholder contact header.
+"""
+
