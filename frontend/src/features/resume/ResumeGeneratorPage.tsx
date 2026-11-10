@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Sparkles, Shield, Play } from 'lucide-react';
+import { FileText, Sparkles, Shield, Play, Mail } from 'lucide-react';
 import { apiClient, ApiClientError } from '../../api/client';
 import { InputField } from '../../components/InputField';
 import { ResultPanel } from '../../components/ResultPanel';
@@ -7,9 +7,11 @@ import { LoadingState } from '../../components/LoadingState';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { ResumeStyle } from '../../types/api';
 import { useToast } from '../../context/ToastContext';
+import { CoverLetterTab } from './CoverLetterTab';
 
 export const ResumeGeneratorPage: React.FC = () => {
   const toast = useToast();
+  const [activeSubTab, setActiveSubTab] = useState<'resume' | 'cover-letter'>('resume');
   const [experience, setExperience] = useState('');
   const [targetRole, setTargetRole] = useState('Senior Python Developer');
   const [style, setStyle] = useState<ResumeStyle>('standard');
@@ -85,7 +87,39 @@ export const ResumeGeneratorPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Privacy Notice */}
+      {/* Subtab Navigation */}
+      <div className="flex border-b border-slate-200 dark:border-slate-800">
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('resume')}
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            activeSubTab === 'resume'
+              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          <span>Structured Resume</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('cover-letter')}
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            activeSubTab === 'cover-letter'
+              ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+              : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+          }`}
+        >
+          <Mail className="w-4 h-4" />
+          <span>Tailored Cover Letter</span>
+        </button>
+      </div>
+
+      {activeSubTab === 'cover-letter' ? (
+        <CoverLetterTab />
+      ) : (
+        <>
+          {/* Privacy Notice */}
       <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-3.5 flex items-start gap-2.5 text-xs text-text-secondary">
         <Shield className="w-4 h-4 text-primary-accent flex-shrink-0 mt-0.5" />
         <span>
@@ -196,6 +230,8 @@ export const ResumeGeneratorPage: React.FC = () => {
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };

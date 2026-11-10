@@ -2,6 +2,7 @@ import {
   EDAPayload,
   VisualizationPayload,
   ResumePayload,
+  CoverLetterPayload,
   InterviewPayload,
   MeetingPayload,
   FeatureResponse,
@@ -86,6 +87,13 @@ export const apiClient = {
 
   async generateResume(payload: ResumePayload): Promise<FeatureResponse> {
     return request<FeatureResponse>('/api/generate/resume', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async generateCoverLetter(payload: CoverLetterPayload): Promise<FeatureResponse> {
+    return request<FeatureResponse>('/api/generate/cover-letter', {
       method: 'POST',
       body: JSON.stringify(payload),
     });

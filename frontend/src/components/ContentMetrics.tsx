@@ -56,3 +56,4 @@ export const ContentMetrics: React.FC<ContentMetricsProps> = ({ content, classNa
     </div>
   );
 };
+

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 
-type ThemeMode = 'light' | 'dark' | 'system';
-
 /**
  * Hook to manage theme with automatic system preference detection and localStorage persistence.
  */

@@ -65,6 +65,13 @@ export interface ResumePayload extends BaseGenerationPayload {
   style?: ResumeStyle;
 }
 
+export interface CoverLetterPayload extends BaseGenerationPayload {
+  experience_text: string;
+  job_description: string;
+  company_name?: string;
+  tone?: string;
+}
+
 export type InterviewDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export interface InterviewPayload extends BaseGenerationPayload {

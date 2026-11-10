@@ -34,7 +34,7 @@ export const CoverLetterTab: React.FC = () => {
     setJobDescription(SAMPLE_JOB_DESCRIPTION);
     setCompanyName('ScaleTech Solutions');
     setTone('enthusiastic');
-    toast.show('Sample job & experience loaded into form', 'info');
+    toast.info('Sample Loaded', 'Sample job & experience loaded into form');
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -45,23 +45,23 @@ export const CoverLetterTab: React.FC = () => {
     setError(null);
 
     try {
-      const response = await apiClient.post<any>('/generate/cover-letter', {
+      const response = await apiClient.generateCoverLetter({
         experience_text: experienceText,
         job_description: jobDescription,
         company_name: companyName || 'Hiring Team',
         tone,
       });
 
-      if (response.data?.success) {
-        const text = response.data.result;
+      if (response.success) {
+        const text = response.result;
         setResult(text);
         saveToHistory('cover-letter', `Cover Letter - ${companyName || 'Hiring Team'}`, text);
-        toast.show('Targeted cover letter generated successfully!', 'success');
+        toast.success('Generated!', 'Targeted cover letter generated successfully');
       } else {
-        setError(response.data?.error?.message || 'Failed to generate cover letter.');
+        setError('Failed to generate cover letter.');
       }
     } catch (err: any) {
-      setError(err?.response?.data?.error?.message || err?.message || 'Error communicating with generation API.');
+      setError(err?.message || 'Error communicating with generation API.');
     } finally {
       setIsLoading(false);
     }
