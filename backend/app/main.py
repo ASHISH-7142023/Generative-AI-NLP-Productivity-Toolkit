@@ -10,10 +10,34 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.api.routes import router
 from app.api.schemas import ErrorDetail, ErrorResponse
 from app.core.config import settings
+from app.core.exceptions import AppException
 from app.core.logging_config import logger, setup_logging
 from app.core.middleware import RequestIDMiddleware
 from app.core.security import SecurityHeadersMiddleware
 from app.services.openai_service import OpenAIServiceException
+
+OPENAPI_TAGS = [
+    {
+        "name": "Data Analysis",
+        "description": "Natural language to Pandas EDA code generation and Matplotlib/Seaborn visualization scripts.",
+    },
+    {
+        "name": "Career Tools",
+        "description": "Factual STAR-format resume transformation and job-tailored cover letter synthesis.",
+    },
+    {
+        "name": "Interview Prep",
+        "description": "Calibrated multi-language technical programming questions with hint ladders.",
+    },
+    {
+        "name": "Meeting Assistant",
+        "description": "Executive synthesis of multi-speaker meeting notes with action-item prioritization.",
+    },
+    {
+        "name": "System & Observability",
+        "description": "Health checks, system diagnostics, and runtime telemetry.",
+    },
+]
 
 
 @asynccontextmanager
@@ -33,6 +57,15 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description="Backend API for Generative AI NLP Productivity Toolkit (EDA, Visualizations, Resumes, Interviews, Meeting Summaries).",
     lifespan=lifespan,
+    openapi_tags=OPENAPI_TAGS,
+    contact={
+        "name": "Infosys Springboard AI Lab",
+        "url": "https://github.com/ASHISH-7142023/Generative-AI-NLP-Productivity-Toolkit",
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+    },
     docs_url="/docs" if settings.APP_ENV == "development" else None,
     redoc_url="/redoc" if settings.APP_ENV == "development" else None,
 )
@@ -57,6 +90,17 @@ app.include_router(router)
 
 
 # Global Exception Handlers ensuring unified response contract
+@app.exception_handler(AppException)
+async def domain_exception_handler(request: Request, exc: AppException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=ErrorResponse(
+            success=False,
+            error=ErrorDetail(code=exc.error_code, message=exc.message),
+        ).model_dump(),
+    )
+
+
 @app.exception_handler(OpenAIServiceException)
 async def openai_service_exception_handler(request: Request, exc: OpenAIServiceException):
     return JSONResponse(
