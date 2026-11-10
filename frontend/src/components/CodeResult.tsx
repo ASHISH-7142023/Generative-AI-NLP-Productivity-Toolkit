@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Copy, Check, Download, ShieldAlert, Terminal } from 'lucide-react';
 
 interface CodeResultProps {
@@ -7,14 +7,14 @@ interface CodeResultProps {
   filename?: string;
 }
 
-export const CodeResult: React.FC<CodeResultProps> = ({
+export const CodeResult: React.FC<CodeResultProps> = memo(({
   code,
   language = 'python',
   filename = 'generated_script.py',
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
@@ -22,9 +22,9 @@ export const CodeResult: React.FC<CodeResultProps> = ({
     } catch (err) {
       console.error('Failed to copy', err);
     }
-  };
+  }, [code]);
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     const blob = new Blob([code], { type: 'text/x-python;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -34,7 +34,7 @@ export const CodeResult: React.FC<CodeResultProps> = ({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
+  }, [code, filename]);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-[#0F172A] text-slate-100 overflow-hidden shadow-floating">
@@ -104,4 +104,6 @@ export const CodeResult: React.FC<CodeResultProps> = ({
       </div>
     </div>
   );
-};
+});
+
+CodeResult.displayName = 'CodeResult';
