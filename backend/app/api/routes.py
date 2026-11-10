@@ -16,17 +16,28 @@ from app.api.schemas import (
     InterviewQuestionRequest,
     MeetingSummaryRequest,
 )
+from app.core.cost_calculator import calculate_cost, estimate_token_count
 
 _server_start_time = time.time()
 
 
-def _make_feature_response(feature: str, result: str) -> FeatureResponse:
-    tokens = max(1, len(result) // 4)
+def _make_feature_response(feature: str, result: str, prompt_text: str = "") -> FeatureResponse:
+    c_tokens = estimate_token_count(result)
+    p_tokens = estimate_token_count(prompt_text) if prompt_text else max(1, c_tokens // 2)
+    total_tokens = p_tokens + c_tokens
+    cost = calculate_cost(settings.OPENAI_MODEL, p_tokens, c_tokens)
     return FeatureResponse(
         success=True,
         feature=feature,
         result=result,
-        usage=UsageMetadata(estimated_tokens=tokens, character_count=len(result)),
+        usage=UsageMetadata(
+            estimated_tokens=total_tokens,
+            prompt_tokens=p_tokens,
+            completion_tokens=c_tokens,
+            estimated_cost_usd=cost,
+            character_count=len(result),
+            cached=False,
+        ),
     )
 from app.services.data_analysis_service import data_analysis_service
 from app.services.resume_service import resume_service
@@ -49,6 +60,9 @@ async def health_check() -> HealthResponse:
         service="nlp-productivity-toolkit",
         version=settings.APP_VERSION,
         model_configured=settings.OPENAI_MODEL,
+        openai_key_configured=bool(settings.OPENAI_API_KEY),
+        environment=settings.APP_ENV,
+        cache_status="operational",
     )
 
 

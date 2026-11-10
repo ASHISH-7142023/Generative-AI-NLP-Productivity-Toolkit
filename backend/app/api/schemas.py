@@ -204,6 +204,9 @@ class HealthResponse(BaseModel):
     service: str = "nlp-productivity-toolkit"
     version: str = "1.0.0"
     model_configured: str
+    openai_key_configured: bool = False
+    environment: str = "development"
+    cache_status: str = "operational"
 
 
 class SystemMetricsResponse(BaseModel):
