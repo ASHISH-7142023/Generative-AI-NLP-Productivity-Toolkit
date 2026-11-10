@@ -13,6 +13,7 @@ from app.api.schemas import (
     EDARequest,
     VisualizationRequest,
     ResumeRequest,
+    CoverLetterRequest,
     InterviewQuestionRequest,
     MeetingSummaryRequest,
 )
@@ -119,7 +120,20 @@ async def generate_visualization(request: VisualizationRequest) -> FeatureRespon
 async def generate_resume(request: ResumeRequest) -> FeatureResponse:
     """Transform experience paragraph into a professional structured resume."""
     result = await resume_service.generate_resume(request)
-    return _make_feature_response("resume", result)
+    return _make_feature_response("resume", result, prompt_text=request.experience)
+
+
+@router.post(
+    "/generate/cover-letter",
+    response_model=FeatureResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Generate tailored cover letter aligned with job requirements",
+)
+async def generate_cover_letter(request: CoverLetterRequest) -> FeatureResponse:
+    """Generate job-tailored cover letter based strictly on candidate's real experience."""
+    result = await resume_service.generate_cover_letter(request)
+    combined_prompt = f"{request.experience_text}\n{request.job_description}"
+    return _make_feature_response("cover_letter", result, prompt_text=combined_prompt)
 
 
 @router.post(
