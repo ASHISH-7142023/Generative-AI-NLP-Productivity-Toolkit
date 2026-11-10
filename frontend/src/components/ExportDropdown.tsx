@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, ChevronDown, FileText, FileCode, Check } from 'lucide-react';
+import { Download, ChevronDown, FileText, FileCode } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 interface ExportDropdownProps {

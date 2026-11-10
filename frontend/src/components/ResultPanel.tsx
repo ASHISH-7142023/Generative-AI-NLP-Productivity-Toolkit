@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Download, Printer, Trash2 } from 'lucide-react';
+import { Copy, Check, Printer, Trash2 } from 'lucide-react';
 import { ExportDropdown } from './ExportDropdown';
 
 interface ResultPanelProps {
@@ -34,17 +34,6 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
     }
   };
 
-  const handleDownload = () => {
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = downloadFilename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
 
   const handlePrint = () => {
     window.print();
