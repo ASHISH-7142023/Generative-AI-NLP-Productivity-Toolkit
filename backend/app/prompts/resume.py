@@ -27,8 +27,8 @@ Candidate Background Information:
 Style Guide ({style}):
 {style_guide}
 
-STRICT FACTUAL INTEGRITY RULES:
-1. NEVER invent, fabricate, or assume employers, job titles, educational institutions, dates, metrics, awards, or certifications.
+STRICT FACTUAL FIDELITY RULES:
+1. Do NOT invent, fabricate, or assume employers, job titles, educational institutions, dates, metrics, awards, or certifications.
 2. Use ONLY facts explicitly provided by the user.
 3. If information for a section (such as Education or Certifications) is not mentioned in the candidate background, omit that section entirely or include a brief note such as '[Add your education details here]'. Do NOT make assumptions.
 4. Transform raw text into strong, action-oriented bullet points using the STAR method (Situation, Task, Action, Result) based strictly on stated accomplishments.

@@ -28,7 +28,7 @@ def estimate_token_count(text: str) -> int:
 
     Approximates tokens at ~4 characters per token for English text.
     """
-    if not text:
+    if not text or not text.strip():
         return 0
     # Blend character-based and whitespace-based approximation
     char_count = len(text)
